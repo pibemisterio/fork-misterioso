@@ -191,7 +191,7 @@ public class StrikeChainProj : Projectile {
 		else if (state == 2) {
 			player.character.move(toWallVel);
 			distRetracted += MathF.Abs(toWallVel.magnitude * Global.spf);
-			var collision = Global.level.checkCollisionActor(player.character, toWallVel.x * Global.spf, toWallVel.y * Global.spf, toWallVel);
+			var collision = Global.level.checkTerrainCollisionOnce(player.character, toWallVel.x * Global.spf, toWallVel.y * Global.spf, toWallVel);
 			if (distRetracted >= distMoved || collision?.gameObject is Wall) {
 				destroySelf();
 				float momentum = 0.25f * (distRetracted / maxDist);
@@ -209,7 +209,7 @@ public class StrikeChainProj : Projectile {
 		var hookedChar = hookedActor as Character;
 
 		if (hookedChar != null && hookedChar.charState is StrikeChainHooked) {
-			hookedChar.changeState(new Idle());
+			hookedChar.changeToLandingOrFall();
 		}
 		if (hookedActor is Anim) {
 			hookedActor.useGravity = true;
@@ -352,13 +352,7 @@ public class StrikeChainPullToWall : CharState {
 	public override void update() {
 		base.update();
 		if (scp == null || scp.destroyed) {
-			var collision = Global.level.checkCollisionActor(player.character, 0, 1);
-			if (collision?.gameObject is Wall) {
-				player.character.vel.y = 0;
-				player.character.changeState(new Idle(), true);
-			} else {
-				player.character.changeState(new Fall(), true);
-			}
+			character.changeToLandingOrFall();
 			return;
 		}
 	}
@@ -441,7 +435,7 @@ public class StrikeChainHooked : CharState {
 			stunTime += Global.spf;
 			if (!flinch || stunTime > 0.375f) {
 				isDone = true;
-				character.changeState(new Idle(), true);
+				character.changeToLandingOrFall();
 				return;
 			}
 		} else if (scpChar != null) {

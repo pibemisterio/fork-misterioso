@@ -169,7 +169,11 @@ public class PZeroDiveKickState : CharState {
 		if (!once) {
 			return;
 		}
-		CollideData hit = Global.level.checkCollisionActor(
+		if (character.vel.y < 100) {
+			character.changeToLandingOrFall();
+			return;
+		}
+		CollideData hit = Global.level.checkTerrainCollisionOnce(
 			character, character.vel.x * Global.spf, character.vel.y * Global.spf
 		);
 		if (hit?.isSideWallHit() == true) {
@@ -206,7 +210,6 @@ public class PZeroDiveKickState : CharState {
 
 
 public class ZeroDropkickLand : CharState {
-	int type;
 	public ZeroDropkickLand() : base("land") {
 		exitOnAirborne = true;
 	}
@@ -403,7 +406,7 @@ public class PZeroShoryuken : CharState {
 			}
 		}
 
-		var wallAbove = Global.level.checkCollisionActor(character, 0, -10);
+		var wallAbove = Global.level.checkTerrainCollisionOnce(character, 0, -10);
 		if (wallAbove != null && wallAbove.gameObject is Wall) {
 			timeInWall += Global.speedMul;
 			if (timeInWall >= 6) {

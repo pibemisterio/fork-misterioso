@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using SFML.Graphics;
+using static SFML.Window.Keyboard;
 
 namespace MMXOnline;
 
@@ -99,8 +100,8 @@ public partial class Character : Actor, IDamagable {
 	// Some things previously in other char files used by multiple characters.
 	public int lastShootPressed;
 	public int lastShootReleased;
-	public int lastAttackFrame = -100;
-	public int framesSinceLastAttack = 1000;
+	public long lastAttackFrame = -100;
+	public long framesSinceLastAttack = 1000;
 	public float grabCooldown;
 
 	public RideArmor? startRideArmor;
@@ -406,17 +407,6 @@ public partial class Character : Actor, IDamagable {
 
 	public override List<ShaderWrapper> getShaders() {
 		List<ShaderWrapper> shaders = new();
-		ShaderWrapper? palette = null;
-
-		// TODO: Send this to the respective classes.
-		if (player.isViralSigma()) {
-			int paletteNum = 6 - MathInt.Ceiling((player.health / player.maxHealth) * 6);
-			if (sprite.name.Contains("_enter")) paletteNum = 0;
-			palette = player.viralSigmaShader;
-			palette?.SetUniform("palette", paletteNum);
-			palette?.SetUniform("paletteTexture", Global.textures["paletteViralSigma"]);
-		}
-		if (palette != null) shaders.Add(palette);
 
 		if (player.isPossessed() && player.possessedShader != null) {
 			player.possessedShader.SetUniform("palette", 1);
@@ -1036,7 +1026,7 @@ public partial class Character : Actor, IDamagable {
 			flag.changePos(getCenterPos());
 		}
 
-		if (startRideArmor != null &&!Global.level.hasGameObject(startRideArmor)) {
+		if (startRideArmor != null && !Global.level.hasGameObject(startRideArmor)) {
 			startRideArmor = null;
 		}
 
@@ -1160,7 +1150,7 @@ public partial class Character : Actor, IDamagable {
 			usedSubtank = null;
 		}
 
-		if (ai != null && !Global.isSkippingFrames) {
+		if (ai != null ) {
 			ai.update();
 		}
 
@@ -1172,7 +1162,7 @@ public partial class Character : Actor, IDamagable {
 
 		// For G. Well damage.
 		// This is calculated after the base update to prevent acidental double damage.
-		if (vel.y < 0 && Global.level.checkCollisionActor(this, 0, -1) != null) {
+		if (vel.y < 0 && Global.level.checkTerrainCollisionOnce(this, 0, -1) != null) {
 			if (gravityWellModifier < 0 && vel.y < -300) {
 				Damager.applyDamage(
 					lastGravityWellDamager,
@@ -1700,11 +1690,6 @@ public partial class Character : Actor, IDamagable {
 	}
 
 	public override Point getCenterPos() {
-		if (player.isSigma) {
-			if (player.isWolfSigma()) return pos.addxy(0, -7);
-			else if (player.isViralSigma()) return pos.addxy(0, 0);
-			return pos.addxy(0, -32);
-		}
 		return pos.addxy(0, -18);
 	}
 
@@ -1936,9 +1921,9 @@ public partial class Character : Actor, IDamagable {
 		return -1;
 	}
 
-	public virtual void changeToIdleOrFall() {
+	public virtual void changeToIdleOrFall(string transitionSprite = "") {
 		if (grounded) {
-			changeState(new Idle(), true);
+			changeState(new Idle(transitionSprite), true);
 		} else {
 			changeState(new Fall(), true);
 		}
@@ -1947,6 +1932,14 @@ public partial class Character : Actor, IDamagable {
 	public virtual void changeToLandingOrFall(bool useSound = true) {
 		if (grounded) {
 			landingCode(useSound);
+		} else {
+			changeState(new Fall(), true);
+		}
+	}
+
+	public virtual void changeToCrouchOrFall() {
+		if (grounded) {
+			changeState(new Crouch(), true);
 		} else {
 			changeState(new Fall(), true);
 		}
@@ -2022,21 +2015,11 @@ public partial class Character : Actor, IDamagable {
 	}
 
 	// Get dist from y pos to pos at which to draw the first label
-	public float getLabelOffY() {
-		float offY = 42;
-		if (player.isZero) offY = 45;
-		if (player.isVile) offY = 50;
-		if (player.isSigma) offY = 62;
-		if (sprite.name.Contains("_ra_")) offY = 25;
-		if (player.isMainPlayer && player.isTagTeam() && player.currentMaverick != null) {
-			offY = player.currentMaverick.getLabelOffY();
+	public virtual float getLabelOffY() {
+		if (sprite.name.Contains("_ra_")) {
+			return 25;
 		}
-		if (player.isWolfSigma()) offY = 25;
-		if (player.isViralSigma()) offY = 43;
-		if (player.isKaiserSigma()) offY = 125;
-		if (player.isKaiserViralSigma()) offY = 60;
-
-		return offY;
+		return 42;
 	}
 
 	public override void render(float x, float y) {
@@ -2302,14 +2285,21 @@ public partial class Character : Actor, IDamagable {
 			}
 		}
 
-		if (Global.showHitboxes) {
+		/*if (Global.showHitboxes) {
 			Point? headPos = getHeadPos();
 			if (headPos != null) {
 				//DrawWrappers.DrawCircle(headPos.Value.x, headPos.Value.y, headshotRadius, true, new Color(255, 0, 255, 128), 1, ZIndex.HUD);
 				var headRect = getHeadRect();
-				DrawWrappers.DrawRect(headRect.x1, headRect.y1, headRect.x2, headRect.y2, true, new Color(255, 0, 0, 128), 1, ZIndex.HUD);
+				DrawWrappers.DrawRect(
+					headRect.x1 + 1,
+					headRect.y1 + 1,
+					headRect.x2 - 1,
+					headRect.y2 - 1,
+					true, new Color(255, 0, 0, 50), 1, ZIndex.HUD, true,
+					new Color(255, 0, 0, 128)
+				);
 			}
-		}
+		}*/
 	}
 
 	public void drawSpinner(float progress) {
@@ -2318,7 +2308,7 @@ public partial class Character : Actor, IDamagable {
 		float ang = -90;
 		float radius = 4f;
 		float thickness = 1.5f;
-		int count = Options.main.lowQualityParticles() ? 8 : 40;
+		int count = Options.main.lowQualityParticles() ? 16 : 40;
 
 		for (int i = 0; i < count; i++) {
 			float angCopy = ang;
@@ -2694,7 +2684,7 @@ public partial class Character : Actor, IDamagable {
 		// For fractional damage shenanigans.
 		if (damage % 1 != 0) {
 			decimal decDamage = damage % 1;
-			damage = Math.Floor(decDamage);
+			damage = Math.Floor(damage);
 			// Fully nullyfy decimal using damage savings if posible.
 			if (damageSavings >= decDamage) {
 				damageSavings -= decDamage;
@@ -3431,11 +3421,8 @@ public partial class Character : Actor, IDamagable {
 	public bool disguiseCoverBlown;
 
 	public void addTransformAnim() {
-		transformAnim = new Anim(pos, "axl_transform", xDir, null, true);
-		playSound("transform");
-		if (ownedByLocalPlayer) {
-			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (byte)RPCToggleType.AddTransformEffect);
-		}
+		transformAnim = new Anim(pos, "axl_transform", xDir, player.getNextActorNetId(), true);
+		playSound("transform", sendRpc: true);
 	}
 
 	public virtual void onFlinchOrStun(CharState state) {

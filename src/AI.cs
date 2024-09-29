@@ -49,7 +49,7 @@ public class AI {
 		if (Global.level.isTraining()) mashType = 0;
 		targetUpdateFrame = targetUpdateCounter;
 		targetUpdateCounter++;
-		if (targetUpdateCounter >= Server.maxPlayerCap / 2) {
+		if (targetUpdateCounter >= 60) {
 			targetUpdateCounter = 0;
 		}
 	}
@@ -262,7 +262,7 @@ public class AI {
 		if (target != null && target.destroyed) {
 			target = null;
 		}
-		if (!Global.isSkippingFrames && Global.level.nonSkippedframeCount % 60 == targetUpdateFrame) {
+		if (Global.level.frameCount % 60 == targetUpdateFrame) {
 			if (target != null && (
 					target.destroyed ||
 					character.pos.distanceTo(target.pos) > 400 ||
@@ -1619,14 +1619,14 @@ public class AI {
 				   !DoppmaSigma.isInvulnerable() && DoppmaSigma.charState.canAttack()
 				   && !(DoppmaSigma.charState is CallDownMaverick or SigmaThrowShieldState or Sigma3Shoot)) {
 					switch (DoppmaSigmaAttack) {
-						case 0 when DoppmaSigma.sigma3FireballCooldown == 0:
+						case 0 when DoppmaSigma.fireballCooldown == 0:
 							DoppmaSigma.changeState(new Sigma3Shoot(player.input.getInputDir(player)), true);
-							DoppmaSigma.sigma3FireballCooldown = DoppmaSigma.maxSigma3FireballCooldown;
+							DoppmaSigma.fireballCooldown = DoppmaSigma.maxFireballCooldown;
 							break;
-						case 1 when DoppmaSigma.sigma3ShieldCooldown == 0:
+						case 1 when DoppmaSigma.shieldCooldown == 0:
 							if (DoppmaSigma.grounded) {
 								DoppmaSigma.changeState(new SigmaThrowShieldState(), true);
-								DoppmaSigma.sigma3ShieldCooldown = DoppmaSigma.maxSigma3ShieldCooldown;
+								DoppmaSigma.shieldCooldown = DoppmaSigma.maxShieldCooldown;
 							}
 							break;
 						case 2:
@@ -1785,11 +1785,11 @@ public class AI {
 	public void axlAIAttack(Character axl2) {
 		//Axl Start
 		if (character is Axl axl) {
-			if (player.axlHyperMode == 0 && player.currency >= 10 && !player.isDead && !axl.isSpriteInvulnerable() && !axl.isInvulnerable() && !axl.isWhiteAxl()
+			if (axl.axlHyperMode == 0 && player.currency >= 10 && !player.isDead && !axl.isSpriteInvulnerable() && !axl.isInvulnerable() && !axl.isWhiteAxl()
 				&& !(axl.charState is Hurt or Die or GenericStun or WarpIn or HyperAxlStart or WallSlide or WallKick or DodgeRoll)) {
 				axl.changeState(new HyperAxlStart(axl.grounded), true);
 			}
-			if (player.axlHyperMode == 1 && player.currency >= 10 && !player.isDead && !axl.isSpriteInvulnerable() && !axl.isInvulnerable() && !axl.isStealthMode()
+			if (axl.axlHyperMode == 1 && player.currency >= 10 && !player.isDead && !axl.isSpriteInvulnerable() && !axl.isInvulnerable() && !axl.isStealthMode()
 				&& !(axl.charState is Hurt or Die or GenericStun or WarpIn or HyperAxlStart or WallSlide or WallKick or DodgeRoll)) {
 				axl.stingChargeTime = 12;
 			}

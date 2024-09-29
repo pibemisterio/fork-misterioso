@@ -757,10 +757,10 @@ public class GameMode {
 				FontType.RedishOrange, Helpers.controlText("Connectivity issues detected."),
 				Global.halfScreenW, 50, Alignment.Center
 			);
-		} else if (mainPlayer?.character is BaseSigma sigma && sigma.possessTarget != null) {
+		} else if (mainPlayer?.character is ViralSigma viralSigma && viralSigma.possessTarget != null) {
 			Fonts.drawText(
 				FontType.BlueMenu, Helpers.controlText(
-				$"Hold [JUMP] to possess {sigma.possessTarget.player.name}"),
+				$"Hold [JUMP] to possess {viralSigma.possessTarget.player.name}"),
 				Global.halfScreenW, 50, Alignment.Center
 			);
 		} else if (hudErrorMsgTime > 0) {
@@ -1691,11 +1691,15 @@ public class GameMode {
 
 			Fonts.drawText(
 				FontType.Grey,
-				"Start GridItem Count: " + level.startGridCount, topLeftX, topLeftY + (currentLineH += lineHeight)
+				"GridItem Count: " +
+				level.startGridCount + "-" + level.getGridCount(),
+				topLeftX, topLeftY + (currentLineH += lineHeight)
 			);
 			Fonts.drawText(
 				FontType.Grey,
-				"Current GridItem Count: " + level.getGridCount(), topLeftX, topLeftY + (currentLineH += lineHeight)
+				"TGridItem Count: " +
+				level.startTGridCount + "-" + level.getTGridCount(),
+				topLeftX, topLeftY + (currentLineH += lineHeight)
 			);
 
 			Fonts.drawText(

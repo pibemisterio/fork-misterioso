@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using SFML.Graphics;
@@ -200,9 +200,9 @@ public class MovingPlatform : Wall {
 
 	public void changePos(Point newOrigin) {
 		var oldPos = collider.shape.points[0];
-		Global.level.removeGameObject(this);
+		Global.level.removeFromGrid(this);
 		updateCollider(newOrigin);
-		Global.level.addGameObject(this);
+		Global.level.addToGrid(this);
 		var newPos = collider.shape.points[0];
 		deltaMove = new Point(newPos.x - oldPos.x, newPos.y - oldPos.y);
 	}
@@ -275,17 +275,22 @@ public class CrackedWall : Actor, IDamagable {
 	}
 
 	public void move(Point deltaPos) {
+		if (deltaPos == Point.zero) {
+			return;
+		}
+		Global.level.removeFromGrid(this);
 		incPos(deltaPos);
-		Global.level.removeFromGridFast(wall);
-		var rect = collider.shape.getRect().getPoints();
-		wall.collider._shape.points = new List<Point>()
-		{
-				rect[0].addxy(1, 1),
-				rect[1].addxy(-1, 1),
-				rect[2].addxy(-1, -1),
-				rect[3].addxy(1, -1),
-			};
-		Global.level.addGameObjectToGrid(wall);
+		Global.level.addToGrid(this);
+
+		Global.level.removeFromGrid(wall);
+		List<Point> rect = collider.shape.getRect().getPoints();
+		wall.collider._shape.points = new List<Point>() {
+			rect[0].addxy(1, 1),
+			rect[1].addxy(-1, 1),
+			rect[2].addxy(-1, -1),
+			rect[3].addxy(1, -1),
+		};
+		Global.level.addToGrid(wall);
 	}
 
 	// Only if 0 is returned, it can't damage it. Even if null, it still can
@@ -429,12 +434,15 @@ public class KillZone : Geometry {
 	}
 
 	public void move(Point deltaPos) {
-		Global.level.removeFromGridFast(this);
+		if (deltaPos == Point.zero) {
+			return;
+		}
+		Global.level.removeFromGrid(this);
 		for (int i = 0; i < collider._shape.points.Count; i++) {
 			Point point = collider._shape.points[i];
 			collider._shape.points[i] = point.add(deltaPos);
 		}
-		Global.level.addGameObjectToGrid(this);
+		Global.level.addToGrid(this);
 	}
 }
 

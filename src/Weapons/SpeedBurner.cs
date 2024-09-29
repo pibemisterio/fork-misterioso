@@ -156,15 +156,15 @@ public class SpeedBurnerCharState : CharState {
 
 		character.move(new Point(character.xDir * 350, 0));
 
-		CollideData collideData = Global.level.checkCollisionActor(character, character.xDir, 0);
+		CollideData collideData = Global.level.checkTerrainCollisionOnce(character, character.xDir, 0);
 		if (collideData != null && collideData.isSideWallHit() && character.ownedByLocalPlayer) {
 			character.applyDamage(2, player, character, (int)WeaponIds.SpeedBurner, (int)ProjIds.SpeedBurnerRecoil);
 			//character.changeState(new Hurt(-character.xDir, Global.defFlinch, 0), true);
-			character.changeState(new Idle(), true);
+			character.changeToIdleOrFall();
 			character.playSound("hurt", sendRpc: true);
 			return;
 		} else if (stateTime > 0.6f) {
-			character.changeState(new Idle(), true);
+			character.changeToIdleOrFall();
 			return;
 		}
 
