@@ -27,7 +27,7 @@ public class HyperZeroStart : CharState {
 					}
 					if (virusAnim[i].destroyed) {
 						character.playSound("shingetsurinx5", true);
-						if (stateFrames > 155) { //Increases the ammount of time and viruses
+						if (stateFrames > 55) {
 							virusAnim[i] = null!;
 							continue;
 						}
@@ -46,14 +46,14 @@ public class HyperZeroStart : CharState {
 						virusAnim[i] = createVirusAnim();
 					}
 				}
-				if (animCount == 0 && stateFrames > 55 && virusEffectParts != null) { //nao
+				if (animCount == 0 && stateFrames > 55 && virusEffectParts != null) {
 					virusEffectParts.destroySelf();
 				}
 			}
 		}
 		if (time == 0) {
 			if (radius >= 0) {
-				radius -= Global.spf * 70; //This maybe. Yeah this remove circle and understand shit
+				radius -= Global.spf * 200;
 			} else {
 				time = Global.spf;
 				radius = 0;

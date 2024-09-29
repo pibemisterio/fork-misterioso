@@ -924,7 +924,7 @@ public class Zero : Character {
 		if (isViral && visible) {
 			addRenderEffect(RenderEffectType.Trail);
 		} else {
-			addRenderEffect(RenderEffectType.TrailZero);
+			removeRenderEffect(RenderEffectType.Trail);
 		}
 		float auraAlpha = 1;
 		if (isAwakened && visible && hypermodeBlink > 0) {
