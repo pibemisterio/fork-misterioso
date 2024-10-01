@@ -31,15 +31,31 @@ public class Hurt : CharState {
 		if (character.isCCImmune()) return false;
 		if (character.vaccineTime > 0) return false;
 		if (character.rideArmorPlatform != null) return false;
+		if (player.isX && player.hasBootsArmor(1) && isMiniFlinch()) return false;
 		return base.canEnter(character);
 	}
 
 	public override void onEnter(CharState oldState) {
 		base.onEnter(oldState);
-		if (player.isX && player.hasBodyArmor(1)) {
-			flinchTime *= 0.75f;
+	
+        	if (isMiniFlinch()) {
+            sprite = "hurt2";
+			character.changeSpriteFromName("hurt2", true);
+}
+	//add here though guy chars
+		if (player.isX && player.hasBootsArmor(1)) {
+			flinchTime *= 0.4f;
 			sprite = "hurt2";
 			character.changeSpriteFromName("hurt2", true);
+			hurtSpeed = 0f;
+
+
+			} else {
+				
+			flinchTime *= 1.5f;
+			
+
+			
 		}
 		if (!spiked) {
 			character.vel.y = (-0.125f * (flinchTime - 1)) * 60f;
@@ -62,20 +78,10 @@ public class Hurt : CharState {
 		}
 
 		if (isMiniFlinch()) {
-			character.frameSpeed = 0;
-			if (Global.frameCount % 2 == 0) {
-				if (player.charNum == 0) character.frameIndex = 3;
-				if (player.charNum == 1) character.frameIndex = 3;
-				if (player.charNum == 2) character.frameIndex = 0;
-				if (player.charNum == 3) character.frameIndex = 3;
-			} else {
-				if (player.charNum == 0) character.frameIndex = 2;
-				if (player.charNum == 1) character.frameIndex = 2;
-				if (player.charNum == 2) character.frameIndex = 1;
-				if (player.charNum == 3) character.frameIndex = 2;
-			}
-		}
-
+			flinchTime *= 0.4f;
+		
+		
+	}
 		if (player.character is MegamanX or Zero &&
 			player.character.canCharge() &&
 			player.character.chargeButtonHeld()

@@ -173,9 +173,13 @@ public class Buster : Weapon {
 					player.character.changeState(new X3ChargeShot(null), true);
 					shootSound = "";
 				}
-			} else if (player.hasArmArmor(0) || player.hasArmArmor(1)) {
+			} else if (player.hasArmArmor(1)) {
 				new Anim(pos.clone(), "buster4_muzzle_flash", xDir, null, true);
 					new BusterPlasmaProj(this, pos, xDir, player, netProjId);
+					shootSound = "plasmaShot";
+					} else if (player.hasArmArmor(0)) {
+				new Anim(pos.clone(), "buster4_muzzle_flash", xDir, null, true);
+					new DZBuster3Proj(pos, xDir, player, player.getNextActorNetId(), rpc: true);
 					shootSound = "plasmaShot";
 			} else if (player.hasArmArmor(2)) {
 				if (player.ownedByLocalPlayer) {
@@ -768,9 +772,11 @@ public class BusterPlasmaProj : Projectile {
 public class BusterPlasmaHitProj : Projectile {
 	public BusterPlasmaHitProj(Weapon weapon, Point pos, int xDir, Player player, ushort netProjId, bool rpc = false) :
 		base(weapon, pos, xDir, 0, 1, player, "buster_plasma_hit", 1, 0.1f, netProjId, player.ownedByLocalPlayer) {
-		maxTime = 2f;
+		maxTime = 3f;
 		projId = (int)ProjIds.BusterX3PlasmaHit;
 		destroyOnHit = false;
+		fadeOnAutoDestroy = true;
+		fadeSprite = "buster_plasma_hit_fade";
 		netcodeOverride = NetcodeModel.FavorDefender;
 
 		if (rpc) {

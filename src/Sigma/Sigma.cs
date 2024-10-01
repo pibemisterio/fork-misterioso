@@ -521,6 +521,7 @@ public class BaseSigma : Character {
 
 	public override void render(float x, float y) {
 		base.render(x, y);
+		addRenderEffect(RenderEffectType.TrailSigma);
 
 		if (tagTeamSwapProgress > 0) {
 			float healthBarInnerWidth = 30;

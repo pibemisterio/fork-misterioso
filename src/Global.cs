@@ -59,11 +59,24 @@ public partial class Global {
 	 */
 
 	// Most common by far
+
+	/*
+    0 = X
+	1 = Zero
+	2 = Vile
+	3 = Axl
+	4 = Sigma
+	5 = Knuckle
+	6 = Zbuster
+
+
+	*/
+
 	public static int quickStartCharNum = 0;
 	public static int quickStartBotCharNum = 0;
 
 	public static bool _quickStart = true;
-	public static string quickStartMap = "X4Volcano";
+	public static string quickStartMap = "training";
 	public static bool quickStartMirrored = false;
 
 	// Training

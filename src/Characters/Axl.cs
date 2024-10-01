@@ -1181,8 +1181,9 @@ public class Axl : Character {
 	}
 
 	public override void render(float x, float y) {
+		 addRenderEffect(RenderEffectType.TrailAxl);
 		base.render(x, y);
-
+    
 		if (!ownedByLocalPlayer) {
 			if (shouldDrawArmNet) {
 				drawArm(netArmAngle);

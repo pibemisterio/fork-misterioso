@@ -2880,7 +2880,7 @@ public partial class Character : Actor, IDamagable {
 	}
 
 	public void killPlayer(Player? killer, Player? assister, int? weaponIndex, int? projId) {
-		player.health = 0;
+		player.health = 0; //checkpoint
 		int? assisterProjId = null;
 		int? assisterWeaponId = null;
 		if (charState is not Die || !ownedByLocalPlayer) {

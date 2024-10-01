@@ -500,34 +500,55 @@ public class Sprite {
 
 				    });
     			 } else {
-   
-               if (renderEffects.Contains(RenderEffectType.TrailAxl) && character != null && Global.shaderWrappers.ContainsKey("trailAxl")) {
-					for (int i = character.lastFiveTrailDraws.Count - 1; i >= 0; i--) {
-					Trail trail = character.lastFiveTrailDraws[i];
-					if (character.isDashing) {
-						trail.action.Invoke(trail.time);
-					}
-					trail.time -= Global.spf;
-					if (trail.time <= 0) character.lastFiveTrailDraws.RemoveAt(i);
-				}
+            if (renderEffects.Contains(RenderEffectType.TrailAxl) && character != null && Global.shaderWrappers.ContainsKey("trailAxl")) {
+                for (int i = character.lastFiveTrailDraws.Count - 1; i >= 0; i--) {
+                    Trail trail = character.lastFiveTrailDraws[i];
+                    if (character.isDashing) {
+                        trail.action.Invoke(trail.time);
+                    }
+                    trail.time -= Global.spf;
+                    if (trail.time <= 0) character.lastFiveTrailDraws.RemoveAt(i);
+                }
 
-				var shaderList = new List<ShaderWrapper>();
+                var shaderList = new List<ShaderWrapper>();
+                var trailAxlShader = character.player.trailAxlShader;
+                shaderList.Add(trailAxlShader);
 
-				var trailAxlShader = character.player.trailAxlShader;
-				shaderList.Add(trailAxlShader);
+                if (character.lastFiveTrailDraws.Count > 1) character.lastFiveTrailDraws.PopFirst();
+                character.lastFiveTrailDraws.Add(new Trail() {
+                    action = (float time) => {
+                        trailAxlShader?.SetUniform("alpha", time * 2);
+                        DrawWrappers.DrawTexture(bitmap, currentFrame.rect.x1, currentFrame.rect.y1, currentFrame.rect.w(), currentFrame.rect.h(), x + frameOffsetX, y + frameOffsetY, zIndex - 1, cx, cy, xDirArg, yDirArg, angle, alpha, shaderList, true);
+                    },
+                    time = 0.125f
+                });
+            } else {
+                
+                if (renderEffects.Contains(RenderEffectType.TrailSigma) && character != null && Global.shaderWrappers.ContainsKey("trailSigma")) {
+                    for (int i = character.lastFiveTrailDraws.Count - 1; i >= 0; i--) {
+                        Trail trail = character.lastFiveTrailDraws[i];
+                        if (character.isDashing) {
+                            trail.action.Invoke(trail.time);
+                        }
+                        trail.time -= Global.spf;
+                        if (trail.time <= 0) character.lastFiveTrailDraws.RemoveAt(i);
+                    }
 
-				if (character.lastFiveTrailDraws.Count > 1) character.lastFiveTrailDraws.PopFirst();
+                    var shaderList = new List<ShaderWrapper>();
+                    var trailSigmaShader = character.player.trailSigmaShader;
+                    shaderList.Add(trailSigmaShader);
 
-				character.lastFiveTrailDraws.Add(new Trail() {
-					action = (float time) => {
-						trailAxlShader?.SetUniform("alpha", time * 2);
-						DrawWrappers.DrawTexture(bitmap, currentFrame.rect.x1, currentFrame.rect.y1, currentFrame.rect.w(), currentFrame.rect.h(), x + frameOffsetX, y + frameOffsetY, zIndex, cx, cy, xDirArg, yDirArg, angle, alpha, shaderList, true);
-					},
-					time = 0.125f
-
-				    });
-					 }
-   }
+                    if (character.lastFiveTrailDraws.Count > 1) character.lastFiveTrailDraws.PopFirst();
+                    character.lastFiveTrailDraws.Add(new Trail() {
+                        action = (float time) => {
+                            trailSigmaShader?.SetUniform("alpha", time * 2);
+                            DrawWrappers.DrawTexture(bitmap, currentFrame.rect.x1, currentFrame.rect.y1, currentFrame.rect.w(), currentFrame.rect.h(), x + frameOffsetX, y + frameOffsetY, zIndex, cx, cy, xDirArg, yDirArg, angle, alpha, shaderList, true);
+                        },
+                        time = 0.125f
+                    });
+                }
+            }
+        }
     }
 }
 		}
@@ -750,7 +771,7 @@ public class AnimData {
 		if (textureName == "0_X") {
 			isXSprite = true;
 		}
-		if (textureName == "axl") {
+		if (textureName == "0_A") {
 			isAxlSprite = true;
 		}
 

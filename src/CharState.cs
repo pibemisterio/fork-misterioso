@@ -860,14 +860,13 @@ public class Dash : CharState {
 		if (dashTime > Global.spf * 32 * distanceModifier || stop) {
 			if (!stop) {
 				dashTime = 0;
-				character.frameIndex = 0;
 				character.sprite.frameTime = 0;
 				character.sprite.animTime = 0;
 				character.sprite.frameSpeed = 0.1f;
 				stop = true;
 			} else {
 				if (inputXDir != 0 && character.grounded) {
-					character.changeState(new Run(), true);
+					character.changeState(new DashEnd(), true);
 				} else {
 					character.changeToIdleOrFall();
 				}
@@ -904,7 +903,53 @@ public class Dash : CharState {
 		}
 	}
 }
+public class DashEnd : CharState {
+	public float dashTime = 0;
+	public int initialDashDir;
 
+	public DashEnd() : base("dash_end", "dash_end_shoot", "") {
+		attackCtrl = true;
+		normalCtrl = true;
+	}
+
+	public override void onEnter(CharState oldState) {
+		base.onEnter(oldState);
+		character.isDashing = true;
+		initialDashDir = character.xDir;
+		character.globalCollider = character.getDashingCollider();
+
+
+
+	}
+
+	public override void onExit(CharState newState) {
+		base.onExit(newState);
+	}
+
+	public override void update() {
+		base.update();
+
+		 
+           character.move(new Point(character.xDir * 165, 0));
+        
+            dashTime += Global.spf; {
+			
+			return;
+		}
+
+		if (character.frameIndex >= 4) return;
+
+		dashTime += Global.spf;
+
+		var move = new Point(0, 0);
+		move.x = character.getDashSpeed() * initialDashDir;
+		character.move(move);
+		if (stateTime > 0.1) {
+			stateTime = 0;
+			//new Anim(this.character.pos.addxy(0, -4), "dust", this.character.xDir, null, true);
+		}
+	}
+}
 public class AirDash : CharState {
 	public float dashTime = 0;
 	public string initialDashButton;
