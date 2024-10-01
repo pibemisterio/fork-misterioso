@@ -771,7 +771,7 @@ public class BusterPlasmaProj : Projectile {
 
 public class BusterPlasmaHitProj : Projectile {
 	public BusterPlasmaHitProj(Weapon weapon, Point pos, int xDir, Player player, ushort netProjId, bool rpc = false) :
-		base(weapon, pos, xDir, 0, 1, player, "buster_plasma_hit", 1, 0.1f, netProjId, player.ownedByLocalPlayer) {
+		base(weapon, pos, xDir, 0, 1, player, "buster_plasma_hit", Global.miniFlinch, 0.1f, netProjId, player.ownedByLocalPlayer) {
 		maxTime = 3f;
 		projId = (int)ProjIds.BusterX3PlasmaHit;
 		destroyOnHit = false;

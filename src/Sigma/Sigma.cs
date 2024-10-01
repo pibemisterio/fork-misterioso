@@ -147,7 +147,7 @@ public class BaseSigma : Character {
 						if (!(charState is Idle || charState is Run || charState is Crouch)) return;
 						if (isStriker && player.mavericks.Count > 0) return;
 						buyMaverick(mw);
-						var maverick = player.maverickWeapon.summon(player, pos.addxy(0, -112), pos, xDir);
+						var maverick = player.maverickWeapon.summon(player, pos.addxy(0, 0), pos, xDir);
 						if (isStriker) {
 							mw.maverick.health = mw.lastHealth;
 							if (player.input.isPressed(Control.Shoot, player)) {
@@ -228,7 +228,7 @@ public class BaseSigma : Character {
 		}
 
 		if (tagTeamSwapProgress > 0) {
-			tagTeamSwapProgress += Global.spf * 2;
+			tagTeamSwapProgress += Global.spf * 200;
 			if (tagTeamSwapProgress > 1) {
 				tagTeamSwapProgress = 0;
 				if (tagTeamSwapCase == 0) {
@@ -248,7 +248,7 @@ public class BaseSigma : Character {
 							player.currentMaverick.changeState(new MExit(currentPos, true));
 						}
 
-						mw.summon(player, currentPos.addxy(0, -112), currentPos, xDir);
+						mw.summon(player, currentPos.addxy(0, 0), currentPos, xDir);
 						mw.maverick.health = mw.lastHealth;
 						becomeMaverick(mw.maverick);
 					}

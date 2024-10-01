@@ -864,9 +864,10 @@ public class Dash : CharState {
 				character.sprite.animTime = 0;
 				character.sprite.frameSpeed = 0.1f;
 				stop = true;
+					character.changeState(new DashEnd(), true);
 			} else {
 				if (inputXDir != 0 && character.grounded) {
-					character.changeState(new DashEnd(), true);
+					character.changeState(new Run(), true);
 				} else {
 					character.changeToIdleOrFall();
 				}
@@ -929,13 +930,21 @@ public class DashEnd : CharState {
 	public override void update() {
 		base.update();
 
-		 
-           character.move(new Point(character.xDir * 165, 0));
+		 	{
+  character.move(new Point(character.xDir * 165, 0)); //movementspeed
         
             dashTime += Global.spf; {
+				if (character.isAnimOver()) 
+				{
+					character.changeToIdleOrFall();
+				}
+				return;
+			}
+         
 			
-			return;
 		}
+		
+		
 
 		if (character.frameIndex >= 4) return;
 
