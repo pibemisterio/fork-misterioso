@@ -64,13 +64,12 @@ public partial class MegamanX : Character {
 	public bool boughtUltimateArmorOnce;
 	public bool boughtGoldenArmorOnce;
 
-	public bool stockedCharge;
-	public bool stockedXSaber;
-
-	public bool stockedX3Buster;
+	public bool stockedX2Charge;
+    public bool stockedX3Charge;
+    public bool stockedX3Saber; 
 
 	public float xSaberCooldown;
-	public float stockedChargeFlashTime;
+	//public float stockedX2ChargeFlashTime;
 
 	public BeeSwarm? beeSwarm;
 
@@ -117,19 +116,19 @@ public partial class MegamanX : Character {
 		if (player.weapons.Count > 0) player.weapons[0].ammo = player.weapons[0].maxAmmo;
 	}
 
-	public override void update() {
+		public override void update() {
 		fgMotion = false;
 		base.update();
 
-		if (stockedCharge) {
+		if (stockedX2Charge) {
 			addRenderEffect(RenderEffectType.ChargePink, 0.033333f, 0.1f);
 		}
-		if (stockedXSaber) {
+		if (stockedX3Saber) {
 			addRenderEffect(RenderEffectType.ChargeGreen, 0.05f, 0.1f);
 		}
-		if (stockedX3Buster) {
+		if (stockedX3Charge) {
 			if (player.weapon is not Buster) {
-				stockedX3Buster = false;
+				stockedX3Charge = false;
 			} else {
 				addRenderEffect(RenderEffectType.ChargeOrange, 0.05f, 0.1f);
 			}
@@ -649,20 +648,28 @@ public partial class MegamanX : Character {
 		}
 	}
 
-	public void stockCharge(bool stockOrUnstock) {
-		stockedCharge = stockOrUnstock;
+	public void stockX2Charge(bool stockOrUnstock) {
+		stockedX2Charge = stockOrUnstock;
 		if (ownedByLocalPlayer) {
 			RPC.playerToggle.sendRpc(
-				player.id, stockOrUnstock ? RPCToggleType.StockCharge : RPCToggleType.UnstockCharge
+				player.id, stockOrUnstock ? RPCToggleType.StockX2Charge : RPCToggleType.UnstockX2Charge
+			);
+		}
+	}
+	public void stockX3Charge(bool stockOrUnstock) {
+		stockedX3Charge = stockOrUnstock;
+		if (ownedByLocalPlayer) {
+			RPC.playerToggle.sendRpc(
+				player.id, stockOrUnstock ? RPCToggleType.StockX3Charge : RPCToggleType.UnstockX3Charge
 			);
 		}
 	}
 
-	public void stockSaber(bool stockOrUnstock) {
-		stockedXSaber = stockOrUnstock;
+	public void stockX3Saber(bool stockOrUnstock) {
+		stockedX3Saber = stockOrUnstock;
 		if (ownedByLocalPlayer) {
 			RPC.playerToggle.sendRpc(
-				player.id, stockOrUnstock ? RPCToggleType.StockSaber : RPCToggleType.UnstockSaber
+				player.id, stockOrUnstock ? RPCToggleType.StockX3Saber : RPCToggleType.UnstockX3Saber
 			);
 		}
 	}
@@ -725,9 +732,10 @@ public partial class MegamanX : Character {
 			}
 		}
 
-		if (stockedXSaber) {
+		if (stockedX3Saber) {
 			if (xSaberCooldown == 0) {
-				stockSaber(false);
+				stockX3Saber(false);
+				Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.UnstockX3Saber);
 				changeState(new XSaberState(grounded), true);
 			}
 			return;
@@ -772,20 +780,27 @@ public partial class MegamanX : Character {
 
 		shootRpc(getShootPos(), player.weapon.index, xDir, cl, player.getNextActorNetId(), true);
 
-		if (chargeLevel >= 3 && player.hasGoldenArmor() && player.weapon is Buster) {
-			stockSaber(true);
-			xSaberCooldown = 0.66f;
-		}
-
 		if (chargeLevel >= 3 && player.hasArmArmor(2)) {
-			stockedCharge = true;
+			stockedX2Charge = true;
 			if (player.weapon is Buster) {
-				shootTime = hasUltimateArmor ? 0.5f : 0.25f;
+				shootTime = hasUltimateArmor ? 0.25f : 0;
 			} else shootTime = 0.5f;
-			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.StockCharge);
-		} else if (stockedCharge) {
-			stockedCharge = false;
-			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.UnstockCharge);
+			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.StockX2Charge);
+		} else if (stockedX2Charge) {
+			stockedX2Charge = false;
+			shootTime = 0.25f;
+			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.UnstockX2Charge);
+		}
+		if (chargeLevel >= 3 && player.hasArmArmor(3)) {
+			stockedX3Charge = true;
+			if (player.weapon is Buster) {
+				shootTime = 0f;
+			} else shootTime = 0.5f;
+			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.StockX3Charge);
+		} else if (stockedX3Charge) {
+			stockedX3Charge = false;
+			shootTime = 0.25f;
+			Global.serverClient?.rpc(RPC.playerToggle, (byte)player.id, (int)RPCToggleType.UnstockX3Charge);
 		}
 
 		if (!player.weapon.isStream) {
@@ -855,7 +870,7 @@ public partial class MegamanX : Character {
 	}
 
 	public void shoot(Weapon weapon, Point pos, int xDir, Player player, int chargeLevel, ushort netProjId) {
-		if (stockedCharge) {
+		if (stockedX2Charge) {
 			chargeLevel = 3;
 		}
 
@@ -867,9 +882,9 @@ public partial class MegamanX : Character {
 				if (shootSoundIndex >= weapon.shootSounds.Length) {
 					shootSoundIndex = weapon.shootSounds.Length - 1;
 				}
-				if (weapon.shootSounds[chargeLevel] != "") {
-					player.character.playSound(weapon.shootSounds[chargeLevel]);
-				}
+				/*if (weapon.shootSounds[chargeLevel] != "") {
+					//player.character.playSound(weapon.shootSounds[chargeLevel]);
+				}*/
 			}
 			if (weapon is FireWave) {
 				weapon.soundTime = 0.25f;
@@ -884,13 +899,9 @@ public partial class MegamanX : Character {
 			} else if (weapon is FireWave) {
 				if (chargeLevel < 3) {
 					float chargeTime = player.character.chargeTime;
-					if (chargeTime < 1) {
-						ammoUsage = Global.spf * 10;
-					} else {
-						ammoUsage = Global.spf * 20;
-					}
+					ammoUsage = 0.125f;
 				} else {
-					ammoUsage = 8;
+					ammoUsage = 4;
 				}
 			} else {
 				ammoUsage = weapon.getAmmoUsage(chargeLevel);

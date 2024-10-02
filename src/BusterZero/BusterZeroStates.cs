@@ -120,7 +120,7 @@ public class BusterZeroDoubleBuster : CharState {
 		else {
 			// We add Z-Saber charge if we fire the full charge and we were at 0 charge before.
 			if (zero.stockedBusterLv != 2 || !isSecond) {
-				zero.stockedSaber = true;
+				zero.stockedX3Saber = true;
 			}
 			zero.stockedBusterLv = 2;
 		}
@@ -141,7 +141,7 @@ public class BusterZeroDoubleBuster : CharState {
 				zero.stockedBusterLv = 1;
 			} else {
 				zero.stockedBusterLv = 2;
-				zero.stockedSaber = true;
+				zero.stockedX3Saber = true;
 			}
 		}
 	}
@@ -162,7 +162,7 @@ public class BusterZeroHadangeki : CharState {
 		base.update();
 		if (character.frameIndex >= 7 && !fired) {
 			character.playSound("zerosaberx3", sendRpc: true);
-			zero.stockedSaber = false;
+			zero.stockedX3Saber = false;
 			fired = true;
 			new DZHadangekiProj(
 				character.pos.addxy(30 * character.xDir, -20), character.xDir,
@@ -218,7 +218,7 @@ public class BusterZeroHadangekiWall : CharState {
 		base.update();
 		if (character.frameIndex >= 4 && !fired) {
 			character.playSound("zerosaberx3", sendRpc: true);
-			zero.stockedSaber = false;
+			zero.stockedX3Saber = false;
 			fired = true;
 			new DZHadangekiProj(
 				character.pos.addxy(30 * -wallDir, -20), -wallDir,

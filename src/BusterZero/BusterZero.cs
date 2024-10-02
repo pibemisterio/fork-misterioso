@@ -8,7 +8,7 @@ public class BusterZero : Character {
 	public float lemonCooldown;
 	public bool isBlackZero;
 	public int stockedBusterLv;
-	public bool stockedSaber;
+	public bool stockedX3Saber;
 	public List<DZBusterProj> zeroLemonsOnField = new();
 	public ZBusterSaber meleeWeapon = new();
 
@@ -23,9 +23,9 @@ public class BusterZero : Character {
 
 	public override void update() {
 		base.update();
-		if (stockedBusterLv > 0 || stockedSaber) {
+		if (stockedBusterLv > 0 || stockedX3Saber) {
 			var renderGfx = stockedBusterLv switch {
-				_ when stockedSaber => RenderEffectType.ChargeGreen,
+				_ when stockedX3Saber => RenderEffectType.ChargeGreen,
 				1 => RenderEffectType.ChargePink,
 				2 => RenderEffectType.ChargeOrange,
 				_ => RenderEffectType.ChargeBlue
@@ -65,7 +65,7 @@ public class BusterZero : Character {
 	}
 
 	public override bool canCharge() {
-		return (stockedBusterLv == 0 && !stockedSaber && !isInvulnerableAttack());
+		return (stockedBusterLv == 0 && !stockedX3Saber && !isInvulnerableAttack());
 	}
 
 	public override bool normalCtrl() {
@@ -92,7 +92,7 @@ public class BusterZero : Character {
 		bool specialPressed = player.input.isPressed(Control.Special1, player);
 		if (specialPressed) {
 			if (zSaberCooldown == 0) {
-				if (stockedSaber) {
+				if (stockedX3Saber) {
 					changeState(new BusterZeroHadangeki(), true);
 					return true;
 				}
@@ -127,7 +127,7 @@ public class BusterZero : Character {
 					changeState(new BusterZeroDoubleBuster(true, false), true);
 					return true;
 				}
-				if (stockedSaber) {
+				if (stockedX3Saber) {
 					if (charState is WallSlide wsState) {
 						changeState(new BusterZeroHadangekiWall(wsState.wallDir, wsState.wallCollider), true);
 						return true;
@@ -209,7 +209,7 @@ public class BusterZero : Character {
 			if (charState is WallSlide) {
 				shoot(2);
 				stockedBusterLv = 2;
-				stockedSaber = true;
+				stockedX3Saber = true;
 				lemonCooldown = 22;
 				return;
 			} else {

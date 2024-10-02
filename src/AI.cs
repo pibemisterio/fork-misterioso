@@ -914,13 +914,13 @@ public class AI {
 						}
 						break;
 					case 10:
-						if (megamanX.stockedXSaber) {
+						if (megamanX.stockedX3Saber) {
 							megamanX.player.press(Control.Shoot);
 							megamanX.player.release(Control.Shoot);
 						}
 						break;
 					case 11:
-						if (megamanX.stockedCharge) {
+						if (megamanX.stockedX2Charge) {
 							megamanX.player.press(Control.Shoot);
 							megamanX.player.release(Control.Shoot);
 						}

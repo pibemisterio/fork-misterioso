@@ -3021,8 +3021,8 @@ public partial class Character : Actor, IDamagable {
 				mmx.chargedRollingShieldProj.destroySelf();
 			}
 			mmx.popAllBubbles();
-			mmx.stockedCharge = false;
-			mmx.stockedX3Buster = false;
+			mmx.stockedX2Charge = false;
+			mmx.stockedX3Charge = false;
 			if (mmx.beeSwarm != null) {
 				mmx.beeSwarm.destroy();
 			}

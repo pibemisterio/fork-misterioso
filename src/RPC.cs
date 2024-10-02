@@ -562,14 +562,16 @@ public enum RPCToggleType {
 	StartCrystalize,
 	StopCrystalize,
 	StrikeChainReversed,
-	StockCharge,
-	UnstockCharge,
+	StockX2Charge,
+	UnstockX2Charge,
+	StockX3Charge,
+	UnstockX3Charge,
 	StartRaySplasher,
 	StopRaySplasher,
 	StartBarrier,
 	StopBarrier,
-	StockSaber,
-	UnstockSaber,
+	StockX3Saber,
+	UnstockX3Saber,
 	SetWhiteAxl,
 	ReviveVileTo2,
 	ReviveVileTo5,
@@ -598,15 +600,23 @@ public class RPCPlayerToggle : RPC {
 			player.character?.crystalizeStart();
 		} else if (toggleId == RPCToggleType.StopCrystalize) {
 			player.character?.crystalizeEnd();
-		} else if (toggleId == RPCToggleType.StrikeChainReversed) {
+	    } else if (toggleId == RPCToggleType.StrikeChainReversed) {
 			(player?.character as MegamanX)?.strikeChainProj?.reverseDir();
-		} else if (toggleId == RPCToggleType.StockCharge) {
+		} else if (toggleId == RPCToggleType.StockX2Charge) {
 			if (player?.character is MegamanX mmx) {
-				mmx.stockedCharge = true;
+				mmx.stockedX2Charge = true;
 			}
-		} else if (toggleId == RPCToggleType.UnstockCharge) {
+		} else if (toggleId == RPCToggleType.UnstockX2Charge) {
 			if (player?.character is MegamanX mmx) {
-				mmx.stockedCharge = false;
+				mmx.stockedX2Charge = false;
+			}
+			} else if (toggleId == RPCToggleType.StockX3Charge) {
+			if (player?.character is MegamanX mmx) {
+				mmx.stockedX3Charge = true;
+			}
+		} else if (toggleId == RPCToggleType.UnstockX3Charge) {
+			if (player?.character is MegamanX mmx) {
+				mmx.stockedX3Charge = false;
 			}
 		} else if (toggleId == RPCToggleType.StartRaySplasher) {
 			if (player.character is MegamanX mmx) {
@@ -620,19 +630,19 @@ public class RPCPlayerToggle : RPC {
 			if (player.character is MegamanX mmx) {
 				mmx.barrierTime = mmx.barrierDuration;
 			}
-		} else if (toggleId == RPCToggleType.StopBarrier) {
-			if (player.character is MegamanX mmx) {
-				mmx.barrierTime = 0;
-			}
-		} else if (toggleId == RPCToggleType.StockSaber) {
-			if (player.character is MegamanX mmx) {
-				mmx.stockedXSaber = true;
-			}
-		} else if (toggleId == RPCToggleType.UnstockSaber) {
-			if (player.character is MegamanX mmx) {
-				mmx.stockedXSaber = false;
-			} 
-		} else if (toggleId == RPCToggleType.SetWhiteAxl) {
+	    } else if (toggleId == RPCToggleType.StopBarrier) {
+            if (player.character is MegamanX mmx) {
+                mmx.barrierTime = 0;
+            }
+        } else if (toggleId == RPCToggleType.StockX3Saber) {
+            if (player.character is MegamanX mmx) {
+                mmx.stockedX3Saber = true;
+            }
+        } else if (toggleId == RPCToggleType.UnstockX3Saber) {
+            if (player.character is MegamanX mmx) {
+                mmx.stockedX3Saber = false;
+            } 
+        } else if (toggleId == RPCToggleType.SetWhiteAxl) {
 			if (player.character is Axl axl) {
 				axl.whiteAxlTime = axl.maxHyperAxlTime;
 			}
