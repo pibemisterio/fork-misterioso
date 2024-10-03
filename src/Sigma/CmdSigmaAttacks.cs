@@ -11,7 +11,7 @@ public class SigmaSlashWeapon : Weapon {
 
 public class SigmaSlashState : CharState {
 	CharState prevCharState;
-	int attackFrame = 2;
+	int attackFrame = 5;
 	bool fired;
 	public SigmaSlashState(CharState prevCharState) : base(prevCharState.attackSprite, "", "", "") {
 		this.prevCharState = prevCharState;
@@ -41,7 +41,7 @@ public class SigmaSlashState : CharState {
 
 			Point off = new Point(30, -20);
 			if (character.sprite.name == "sigma_attack_air") {
-				off = new Point(20, -30);
+				off = new Point(30, -20);
 			}
 
 			float damage = character.grounded ? 4 : 3;
@@ -126,6 +126,11 @@ public class SigmaBallShoot : CharState {
 	public CmdSigma sigma;
 
 	public SigmaBallShoot(string transitionSprite = "") : base("shoot", "", "", transitionSprite) {
+		attackCtrl = true;
+		airMove = true;
+		useDashJumpSpeed = true;
+		landSprite = "shoot";
+		airSprite = "shoot_air";
 	}
 
 	public override void update() {
@@ -160,13 +165,13 @@ public class SigmaBallShoot : CharState {
 
 		if (!uHeld && !dHeld && (lHeld || rHeld)) {
 			vel.y = 0;
-			vel.x = character.xDir;
+			vel.x = character.xDir;               
 		}
 
 		if (character.sprite.frameIndex == 0) {
 			shot = false;
 		}
-		if (character.sprite.frameIndex == 1 && !shot) {
+		if (character.sprite.frameIndex == 4 && !shot) {
 			shot = true;
 			Point poi = character.getFirstPOI() ?? character.getCenterPos();
 
@@ -190,11 +195,17 @@ public class SigmaBallShoot : CharState {
 	}
 
 	public override void onEnter(CharState oldState) {
-		base.onEnter(oldState);
-		sigma = character as CmdSigma;
-		character.vel = new Point();
+    base.onEnter(oldState);
+    sigma = character as CmdSigma;
+    
+    if (!character.grounded) {
+        sprite = "shoot_air"; // Set to air sprite if not grounded
+        character.changeSpriteFromName(sprite, true);
+		//character.vel = new Point(); sigma can jump check ai
 	}
 }
+}
+
 
 public class SigmaWallDashState : CharState {
 	bool fired;

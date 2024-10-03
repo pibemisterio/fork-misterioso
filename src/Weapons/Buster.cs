@@ -758,7 +758,7 @@ public class BusterX3Proj1 : Projectile {
 		public BusterX3Proj1(Weapon weapon, Point pos, int xDir, int type, Player player, ushort netProjId, bool rpc = false) :
 		base(weapon, pos, xDir, 350, 1, player, "buster4_max_orb2", Global.halfFlinch, 0f, netProjId, player.ownedByLocalPlayer) {
 		this.type = type;
-		maxDistance = 175;
+		maxDistance = 500;
 		vel.x = 0;
 		fadeSprite = "buster3_fade";
 		fadeOnAutoDestroy = true;

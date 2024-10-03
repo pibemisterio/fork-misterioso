@@ -10,7 +10,7 @@ public class XHover : CharState {
 
 	public override void update() {
 		base.update();
-
+//checkpoint
 		character.xDir = startXDir;
 		Point inputDir = player.input.getInputDir(player);
 

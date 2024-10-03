@@ -68,11 +68,12 @@ public partial class Global {
 	4 = Sigma
 	5 = Knuckle
 	6 = Zbuster
-
-
+ 
+      training 
+   
 	*/
 
-	public static int quickStartCharNum = 0;
+	public static int quickStartCharNum = 4;
 	public static int quickStartBotCharNum = 0;
 
 	public static bool _quickStart = true;
