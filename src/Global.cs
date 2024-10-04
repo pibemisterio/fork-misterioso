@@ -69,15 +69,15 @@ public partial class Global {
 	5 = Knuckle
 	6 = Zbuster
  
-      training 
+      miau
    
 	*/
 
-	public static int quickStartCharNum = 4;
+	public static int quickStartCharNum = 0;
 	public static int quickStartBotCharNum = 0;
 
 	public static bool _quickStart = true;
-	public static string quickStartMap = "training";
+	public static string quickStartMap = "X4Jungle";
 	public static bool quickStartMirrored = false;
 
 	// Training

@@ -30,7 +30,7 @@ public partial class Global {
 	public static View view = null!;
 	public static View backgroundView = null!;
 
-    public static uint screenW = 428;
+    public static uint screenW = 420; //428
     public static uint screenH = 240;
 
     // OG size

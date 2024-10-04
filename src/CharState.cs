@@ -606,7 +606,7 @@ public class Run : CharState {
 		if (move.magnitude > 0) {
 			character.move(move);
 		} else {
-			character.changeToIdleOrFall();
+			character.changeToIdleOrFall("run_end");
 		}
 	}
 }
@@ -864,7 +864,7 @@ public class Dash : CharState {
 				character.sprite.animTime = 0;
 				character.sprite.frameSpeed = 0.1f;
 				stop = true;
-					character.changeState(new DashEnd(), true);
+				character.changeState(new DashEnd(), true);
 			} else {
 				if (inputXDir != 0 && character.grounded) {
 					character.changeState(new Run(), true);
@@ -911,6 +911,7 @@ public class DashEnd : CharState {
 	public DashEnd() : base("dash_end", "dash_end_shoot", "") {
 		attackCtrl = true;
 		normalCtrl = true;
+		exitOnAirborne = true;
 	}
 
 	public override void onEnter(CharState oldState) {
@@ -929,14 +930,15 @@ public class DashEnd : CharState {
 
 	public override void update() {
 		base.update();
+		float inputXDir = player.input.getInputDir(player).x;
 
 		 	{
   character.move(new Point(character.xDir * 165, 0)); //movementspeed
         
             dashTime += Global.spf; {
-				if (character.isAnimOver()) 
-				{
-					character.changeToIdleOrFall();
+				if (character.isAnimOver() || (character.xDir != initialDashDir && character.grounded)) {
+
+    character.changeToIdleOrFall();
 				}
 				return;
 			}
